@@ -203,7 +203,7 @@ export class RelationalDatabase {
   static reset() {
     localStorage.setItem(KEYS.TICKET_PRICE, '20.00');
     localStorage.setItem(KEYS.USERS, JSON.stringify(DEFAULT_USERS));
-    localStorage.setItem(KEYS.TRANSACTIONS, JSON.stringify(DEFAULT_TRANSACTIONS));
+    localStorage.setItem(KEYS.TRANSACTIONS, JSON.stringify([]));
     localStorage.setItem(KEYS.ACCOUNTING_PASSWORD, 'acc123');
   }
 

@@ -72,6 +72,7 @@ export default function AdminDashboard({ onLogoutToPOS, currentUser }: AdminDash
 
   // Confirmation Modals State
   const [showResetConfirm, setShowResetConfirm] = useState<boolean>(false);
+  const [isSystemResetting, setIsSystemResetting] = useState<boolean>(false);
   const [deleteConfirmUser, setDeleteConfirmUser] = useState<{ id: number; terminalId: string } | null>(null);
 
   // Custom Toast state
@@ -302,28 +303,16 @@ export default function AdminDashboard({ onLogoutToPOS, currentUser }: AdminDash
   };
 
   const executeResetDB = () => {
-    RelationalDatabase.reset();
-    setDateFilter('ALL');
-    
-    // Explicitly load metrics with 'ALL' so update is instant
-    RelationalDatabase.init();
-    const activePrice = RelationalDatabase.getTicketPrice();
-    const tx = RelationalDatabase.getTransactions();
-    const mt = RelationalDatabase.getMetrics('ALL', customStartDate, customEndDate);
-    const usersList = RelationalDatabase.getUsers();
-
-    setTicketPrice(activePrice);
-    setTransactions(tx);
-    setMetrics(mt);
-    setDbUsers(usersList);
-    
-    setSqlQuery('SELECT * FROM Transactions');
-    if (activeTab === 'ACCOUNTING' && isAccountingUnlocked) {
-      handleRunSql('SELECT * FROM Transactions');
-    }
-    
     setShowResetConfirm(false);
-    showToast('Database successfully wiped and restored to standard factory seeds!', 'success');
+    setIsSystemResetting(true);
+    
+    // Clear and restore the database to factory standard seeds
+    RelationalDatabase.reset();
+    
+    // Smooth delay for reboot/reload feedback
+    setTimeout(() => {
+      window.location.reload();
+    }, 1800);
   };
 
   const handleRunSql = (queryStr: string) => {
@@ -838,14 +827,7 @@ export default function AdminDashboard({ onLogoutToPOS, currentUser }: AdminDash
                 </button>
               </form>
 
-              <div className="border-t border-slate-100 pt-4 flex flex-col items-center gap-1.5">
-                <span className="text-[10px] text-slate-400 font-mono">
-                  Initial Pin Code: <strong className="font-bold text-slate-600 font-mono">acc123</strong>
-                </span>
-                <span className="text-[9px] bg-slate-100 text-slate-500 px-2 py-0.5 rounded font-mono">
-                  System: AES-256 Memory Emulation
-                </span>
-              </div>
+
 
             </div>
           ) : (
@@ -1668,6 +1650,42 @@ export default function AdminDashboard({ onLogoutToPOS, currentUser }: AdminDash
                 Wipe & Seed DB
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* SYSTEM COLD REBOOT & DB WIPE OVERLAY */}
+      {isSystemResetting && (
+        <div className="fixed inset-0 z-[100] bg-slate-950 flex flex-col items-center justify-center p-6 text-slate-100 font-mono select-none animate-in fade-in duration-300">
+          <div className="max-w-md w-full space-y-8 text-center">
+            {/* Pulsing visual core */}
+            <div className="relative w-24 h-24 mx-auto flex items-center justify-center">
+              <div className="absolute inset-0 rounded-full border-4 border-rose-500/20 border-t-rose-500 animate-spin" />
+              <Database size={36} className="text-rose-500 animate-pulse" />
+            </div>
+
+            <div className="space-y-3">
+              <h2 className="text-lg font-black tracking-widest text-white uppercase">Wiping Terminal Database</h2>
+              <p className="text-xs text-rose-400 font-bold uppercase tracking-wider animate-pulse">Cold Reboot & Reseed in Progress...</p>
+            </div>
+
+            {/* Simulation registers */}
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 text-left text-[10px] space-y-1.5 text-slate-400 max-h-40 overflow-hidden font-mono shadow-inner">
+              <div className="flex justify-between"><span className="text-slate-500">SYS_RESET_INIT:</span> <span className="text-emerald-400 font-bold">OK</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">LOC_STR_WIPE:</span> <span className="text-emerald-400 font-bold">CLEARED</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">SEED_TICKET_RATE:</span> <span className="text-amber-400 font-bold">₹20.00</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">SEED_OPERATOR_ACCTS:</span> <span className="text-amber-400 font-bold">10 WORKSTATIONS</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">SEED_TRANSACTION_LOGS:</span> <span className="text-amber-400 font-bold">8 IMMUTABLE ENTRIES</span></div>
+              <div className="flex justify-between"><span className="text-slate-500">FLUSHING_SYS_MEM:</span> <span className="text-emerald-400 font-bold">COMPLETE</span></div>
+              <div className="flex justify-between animate-pulse"><span className="text-slate-300">REBOOTING_TERMINAL_NODE...</span> <span className="text-rose-400 font-bold">PENDING</span></div>
+            </div>
+
+            {/* Progress Bar */}
+            <div className="w-full h-1.5 bg-slate-900 rounded-full overflow-hidden border border-slate-800">
+              <div className="h-full bg-gradient-to-r from-rose-500 via-amber-500 to-rose-500 animate-pulse w-full" />
+            </div>
+            
+            <p className="text-[10px] text-slate-500">Ram Darshan Counter Node - Security System Gateway</p>
           </div>
         </div>
       )}

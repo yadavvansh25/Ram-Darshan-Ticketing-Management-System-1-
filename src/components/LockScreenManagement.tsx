@@ -13,7 +13,7 @@ export default function LockScreenManagement({ onUnlock, onSwitchToOperator }: L
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string | null>(null);
-  const [showCredentialsHint, setShowCredentialsHint] = useState<boolean>(true);
+  const [showCredentialsHint, setShowCredentialsHint] = useState<boolean>(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
