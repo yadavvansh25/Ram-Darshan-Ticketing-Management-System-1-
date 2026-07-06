@@ -1,0 +1,6 @@
+{
+  "name": "Ram Darshan Ticketing & Management System",
+  "description": "High-speed counter-only POS and operational reporting system for the Ram Darshan Local History Museum with offline-first resiliency, transaction logs, and auto-lock security.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
