@@ -1,13 +1,5 @@
 import { Transaction, PaymentMode, SystemMetrics, User } from './types';
 
-// Helper to generate dynamic timestamps relative to the current time
-const getRelativeDate = (daysAgo: number, hoursAgo: number = 0) => {
-  const d = new Date();
-  d.setDate(d.getDate() - daysAgo);
-  d.setHours(d.getHours() - hoursAgo);
-  return d.toISOString();
-};
-
 // Seed users matching the new PRD RBAC requirements with multiple operator terminals
 const DEFAULT_USERS: User[] = [
   {
@@ -27,153 +19,12 @@ const DEFAULT_USERS: User[] = [
     terminal_id: 'RD-02'
   },
   {
-    user_id: 3,
-    username: 'operator3',
-    password_hash: 'op789',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-03'
-  },
-  {
-    user_id: 4,
-    username: 'operator4',
-    password_hash: 'op555',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-04'
-  },
-  {
-    user_id: 5,
-    username: 'operator5',
-    password_hash: 'op888',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-05'
-  },
-  {
-    user_id: 6,
-    username: 'operator6',
-    password_hash: 'op666',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-06'
-  },
-  {
-    user_id: 7,
-    username: 'operator7',
-    password_hash: 'op777',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-07'
-  },
-  {
-    user_id: 8,
-    username: 'operator8',
-    password_hash: 'op111',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-08'
-  },
-  {
-    user_id: 9,
-    username: 'operator9',
-    password_hash: 'op222',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-09'
-  },
-  {
-    user_id: 10,
-    username: 'operator10',
-    password_hash: 'op333',
-    role: 'OPERATOR',
-    is_active: true,
-    terminal_id: 'RD-10'
-  },
-  {
     user_id: 11,
     username: 'admin',
     password_hash: 'admin123',
     role: 'MANAGEMENT',
     is_active: true,
     terminal_id: 'RD-ADM'
-  }
-];
-
-// Seed transactions matching different date ranges and demonstrating standard ₹20 rate
-// and historical ₹15 pricing (Operational Rule)
-const DEFAULT_TRANSACTIONS: Transaction[] = [
-  {
-    transaction_id: 10001,
-    operator_id: 1, // operator1
-    quantity: 3,
-    ticket_price: 20.00,
-    total_amount: 60.00,
-    payment_mode: 'ONLINE',
-    created_at: getRelativeDate(0, 1) // 1 hour ago (Today)
-  },
-  {
-    transaction_id: 10002,
-    operator_id: 2, // operator2
-    quantity: 5,
-    ticket_price: 20.00,
-    total_amount: 100.00,
-    payment_mode: 'CASH',
-    created_at: getRelativeDate(0, 4) // 4 hours ago (Today)
-  },
-  {
-    transaction_id: 10003,
-    operator_id: 1, // operator1
-    quantity: 2,
-    ticket_price: 20.00,
-    total_amount: 40.00,
-    payment_mode: 'CASH',
-    created_at: getRelativeDate(2, 2) // 2 days ago (Last 15 Days)
-  },
-  {
-    transaction_id: 10004,
-    operator_id: 2, // operator2
-    quantity: 6,
-    ticket_price: 20.00,
-    total_amount: 120.00,
-    payment_mode: 'ONLINE',
-    created_at: getRelativeDate(5, 5) // 5 days ago (Last 15 Days)
-  },
-  {
-    transaction_id: 10005,
-    operator_id: 1, // operator1
-    quantity: 4,
-    ticket_price: 20.00,
-    total_amount: 80.00,
-    payment_mode: 'CASH',
-    created_at: getRelativeDate(12, 1) // 12 days ago (Last 15 Days)
-  },
-  {
-    transaction_id: 10006,
-    operator_id: 2, // operator2
-    quantity: 8,
-    ticket_price: 20.00,
-    total_amount: 160.00,
-    payment_mode: 'ONLINE',
-    created_at: getRelativeDate(22, 3) // 22 days ago (Last 1 Month)
-  },
-  {
-    transaction_id: 10007,
-    operator_id: 1, // operator1
-    quantity: 10,
-    ticket_price: 15.00, // Historical Rate
-    total_amount: 150.00,
-    payment_mode: 'CASH',
-    created_at: getRelativeDate(45, 6) // 45 days ago (Last 1 Year)
-  },
-  {
-    transaction_id: 10008,
-    operator_id: 2, // operator2
-    quantity: 15,
-    ticket_price: 15.00, // Historical Rate
-    total_amount: 225.00,
-    payment_mode: 'ONLINE',
-    created_at: getRelativeDate(120, 8) // 120 days ago (Last 1 Year)
   }
 ];
 
@@ -193,7 +44,7 @@ export class RelationalDatabase {
       localStorage.setItem(KEYS.USERS, JSON.stringify(DEFAULT_USERS));
     }
     if (!localStorage.getItem(KEYS.TRANSACTIONS)) {
-      localStorage.setItem(KEYS.TRANSACTIONS, JSON.stringify(DEFAULT_TRANSACTIONS));
+      localStorage.setItem(KEYS.TRANSACTIONS, JSON.stringify([]));
     }
     if (!localStorage.getItem(KEYS.ACCOUNTING_PASSWORD)) {
       localStorage.setItem(KEYS.ACCOUNTING_PASSWORD, 'acc123');
